@@ -46,3 +46,4 @@ def shutdown_event():
         clear_pinecone_index()
 
     shutil.rmtree("./temp", ignore_errors=True)
+    shutil.rmtree("./temp", ignore_errors=True)
