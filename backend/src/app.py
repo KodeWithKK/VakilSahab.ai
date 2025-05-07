@@ -2,9 +2,11 @@ import shutil
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+
 from src.core.config import settings
 from src.core.database import Base, engine
 from src.core.pinecone import clear_pinecone_index
+from src.core.redis import clear_redis_database
 from src.routes import query, session, upload, user
 from src.utils.exception_handler import (
     generic_exception_handler,
@@ -12,7 +14,6 @@ from src.utils.exception_handler import (
 )
 
 app = FastAPI(title="VakilSahab.ai")
-
 
 app.add_middleware(
     CORSMiddleware,
@@ -44,6 +45,6 @@ def welcome():
 def shutdown_event():
     if settings.ENVIRONMENT == "dev":
         clear_pinecone_index()
+        clear_redis_database()
 
-    shutil.rmtree("./temp", ignore_errors=True)
     shutil.rmtree("./temp", ignore_errors=True)

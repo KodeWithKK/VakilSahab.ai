@@ -4,13 +4,14 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    DATABASE_URL: str
+    ENVIRONMENT: Literal["dev", "prod"]
     FRONTEND_ORIGIN: str
-    MISTRAL_API_KEY: str
+    DATABASE_URL: str
     GEMINI_API_KEY: str
+    MISTRAL_API_KEY: str
     PINECONE_API_KEY: str
     PINECONE_INDEX_NAME: str
-    ENVIRONMENT: Literal["dev", "prod"]
+    REDIS_CONN_STR: str
 
     class Config:
         env_file = ".env"
