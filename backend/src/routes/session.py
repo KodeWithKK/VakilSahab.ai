@@ -7,13 +7,13 @@ router = APIRouter()
 
 @router.get("/list")
 async def list_sessions():
-    session_ids = redis_client.smembers("active_sessions")
+    session_ids = redis_client.smembers("session:active ")
     return {"sessions": session_ids}
 
 
 @router.get("/history/{session_id}")
 async def get_history(session_id: str):
-    if not redis_client.sismember("active_sessions", session_id):
+    if not redis_client.sismember("session:active ", session_id):
         raise HTTPException(status_code=404, detail="Session not found")
 
     redis_chat_history = get_chat_history(session_id)
@@ -39,7 +39,7 @@ async def get_history(session_id: str):
 
 @router.get("/history/redis/{session_id}")
 async def get_redis_history(session_id: str):
-    if not redis_client.sismember("active_sessions", session_id):
+    if not redis_client.sismember("session:active ", session_id):
         raise HTTPException(status_code=404, detail="Session not found")
     return {"history": get_chat_history(session_id)}
 

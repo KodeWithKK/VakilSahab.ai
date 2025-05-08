@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     MISTRAL_API_KEY: str
     PINECONE_API_KEY: str
     PINECONE_INDEX_NAME: str
-    REDIS_CONN_STR: str
+    REDIS_URL: str
 
     class Config:
         env_file = ".env"

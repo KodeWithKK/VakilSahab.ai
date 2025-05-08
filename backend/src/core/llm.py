@@ -12,10 +12,12 @@ llm = ChatGoogleGenerativeAI(
 def get_llm_chain():
     system_prompt = (
         "You are a helpful assistant. "
-        "Answer the user's question directly based on the provided context. "
-        "Be clear, concise, and provide actionable information. "
-        "Respond in conversational language, avoiding filler phrases like 'Based on the context' or 'The context mentions.' "
-        "Do not repeat the question, and do not offer vague explanations."
+        "Answer the user's question clearly and directly based on the provided context. "
+        "Use natural, conversational language. "
+        "Avoid legal jargon or technical terms unless necessary. "
+        "Do not say phrases like 'Based on the context' or 'The context mentions.' "
+        "Do not repeat the question. "
+        "Keep your answers simple, practical, and friendly."
     )
 
     chat_prompt = ChatPromptTemplate.from_messages(
