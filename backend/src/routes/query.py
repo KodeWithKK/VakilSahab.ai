@@ -3,7 +3,7 @@ from typing import List, Optional
 from fastapi import APIRouter, File, Form, UploadFile
 from src.core.llm import get_llm_chain
 from src.core.pinecone import load_pinecone_retriever
-from src.core.redis import redis_client
+from src.core.redis import get_all_user_questions, redis_client
 from src.models.query import QueryResponse
 from src.utils.document_handler import process_files_and_build_index, save_upload_files
 
@@ -24,14 +24,18 @@ async def process_query(
         await process_files_and_build_index(file_paths, session_id)
         redis_client.sadd("session:with_docs", session_id)
 
+    user_questions = get_all_user_questions(session_id)
+    user_questions.append(query)
+    retriver_query = "\n".join(user_questions)
+
     main_retriever = load_pinecone_retriever("MAIN")
-    main_relevant_docs = await main_retriever.ainvoke(query)
+    main_relevant_docs = await main_retriever.ainvoke(retriver_query)
     main_context = "\n\n".join([doc.page_content for doc in main_relevant_docs])
 
     session_context = ""
     if redis_client.sismember("session:with_docs", session_id):
         session_retriever = load_pinecone_retriever(session_id)
-        session_relevant_docs = await session_retriever.ainvoke(query)
+        session_relevant_docs = await session_retriever.ainvoke(retriver_query)
         session_context = "\n\n".join(
             [doc.page_content for doc in session_relevant_docs]
         )
