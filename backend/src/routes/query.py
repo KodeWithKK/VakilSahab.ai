@@ -1,18 +1,19 @@
 from fastapi import APIRouter, HTTPException
+from src.core.llm import get_llm_chain
+from src.core.pinecone import load_pinecone_retriever
+from src.core.redis import redis_client
 from src.models.query import QueryRequest, QueryResponse
-from src.utils.session_manager import sessions
 
 router = APIRouter()
 
 
 @router.post("", response_model=QueryResponse)
 async def process_query(request: QueryRequest):
-    if request.session_id not in sessions:
+    if not redis_client.sismember("active_sessions", request.session_id):
         raise HTTPException(status_code=404, detail="Session not found")
 
-    session = sessions[request.session_id]
-    retriever = session["retriever"]
-    chain = session["chain"]
+    retriever = load_pinecone_retriever(request.session_id)
+    chain = get_llm_chain()
 
     relevant_docs = await retriever.ainvoke(request.query)
     context = "\n\n".join([doc.page_content for doc in relevant_docs])

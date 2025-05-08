@@ -1,4 +1,7 @@
+from typing import List
+
 from langchain.docstore.document import Document
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_pinecone import PineconeVectorStore
 from pinecone import Pinecone, ServerlessSpec
 from src.core.config import settings
@@ -19,8 +22,11 @@ if index_name not in existing_indexes:
 
 pinecone_index = pc.Index(index_name)
 
+# Initialize embedding model
+embedding_model = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 
-def build_pinecone_index(text_chunks, session_id, embedding_model):
+
+def build_pinecone_session(text_chunks: List[str], session_id: str):
     documents = [
         Document(page_content=chunk, metadata={"session_id": session_id, "text": chunk})
         for chunk in text_chunks
@@ -34,14 +40,23 @@ def build_pinecone_index(text_chunks, session_id, embedding_model):
     )
 
     vectorstore.add_documents(documents)
-    return vectorstore.as_retriever(search_kwargs={"k": 3})
 
 
-def clear_pinecone_index(namespace=""):
+def load_pinecone_retriever(session_id: str, top_k: int = 3):
+    vectorstore = PineconeVectorStore(
+        index=pinecone_index, embedding=embedding_model, text_key="text"
+    )
+    retriever = vectorstore.as_retriever(
+        search_kwargs={"k": top_k, "filter": {"session_id": session_id}}
+    )
+    return retriever
+
+
+def clear_pinecone_index(namespace: str = ""):
     stats = pinecone_index.describe_index_stats()
     if namespace in stats["namespaces"]:
-        vector_count = stats["namespaces"][namespace]["vector_count"]
-        print(f"Deleting {vector_count} vectors from namespace '{namespace}'.")
-        pinecone_index.delete(delete_all=True, namespace=namespace)
+        metadata_filter = {"session_id": {"$ne": "MAIN"}}
+        pinecone_index.delete(namespace=namespace, filter=metadata_filter)
+        print(f"Deleted all none main vectors from namespace '{namespace}'.")
     else:
         print(f"Namespace '{namespace}' does not exist. No vectors to delete.")
