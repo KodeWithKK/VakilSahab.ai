@@ -1,16 +1,19 @@
-export interface UserBase {
+export * from "./api-response";
+export * from "./query-sse";
+export * from "./user";
+
+export interface Chat {
   id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  photo: string;
-  role: "USER" | "LAWYER" | "ADMIN";
+  messages: {
+    type: "user" | "ai";
+    message: string;
+  }[];
+  isStreaming: boolean;
 }
 
-export interface User extends UserBase {
-  createdAt: Date;
-  updatedAt: Date;
+export interface ChatInfo {
+  id: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
 }
-
-export interface UserInsert extends UserBase {}
-export interface UserUpdate extends Omit<UserBase, "role" | "id"> {}

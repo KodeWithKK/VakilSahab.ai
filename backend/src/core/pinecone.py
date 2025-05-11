@@ -52,6 +52,11 @@ def load_pinecone_retriever(session_id: str, top_k: int = 3):
     return retriever
 
 
+def clear_session_docs(session_id: str):
+    metadata_filter = {"session_id": session_id}
+    pinecone_index.delete(filter=metadata_filter)
+
+
 def clear_pinecone_index(namespace: str = ""):
     stats = pinecone_index.describe_index_stats()
     if namespace in stats["namespaces"]:

@@ -34,9 +34,9 @@ function HomePage() {
             </SignInButton>
           </SignedOut>
           <SignedIn>
-            <Link href="/dashboard">
+            <Link href="/chatbot">
               <Button size="lg" className="text-base" type="button">
-                Go to Dashboard
+                Go to Chatbot
               </Button>
             </Link>
           </SignedIn>

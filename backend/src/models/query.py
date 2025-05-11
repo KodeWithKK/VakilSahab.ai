@@ -7,4 +7,5 @@ class QueryRequest(BaseModel):
 
 
 class QueryResponse(BaseModel):
+    session_id: str
     answer: str
