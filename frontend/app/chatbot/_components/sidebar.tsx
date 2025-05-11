@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
@@ -15,7 +16,9 @@ function Sidebar() {
 
   return (
     <div className="flex h-screen w-full flex-col border-r bg-card p-4 text-card-foreground">
-      <div className="w-full text-center font-medium">VakilSahab.ai</div>
+      <Link href="/" className="w-full text-center font-medium">
+        VakilSahab.ai
+      </Link>
 
       <div className="mt-4">
         <Button className="w-full" onClick={() => router.push("/chatbot")}>

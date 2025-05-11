@@ -52,11 +52,10 @@ function ChatBot() {
         />
 
         <InputContainer
-          inputValue={input}
+          inputValue={showSkelton ? "" : input}
           onInputChange={(value) => setInput(value)}
           onSubmit={async () => {
             await handleQuery(null, input);
-            // setInput("");
           }}
           disableSubmit={showSkelton || !input.trim()}
         />
