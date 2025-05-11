@@ -29,8 +29,8 @@ def get_all_user_questions(session_id: str):
         if isinstance(msg, HumanMessage):
             message = msg.content
             message = (
-                message.split("User question: ")[-1]
-                if "User question: " in message
+                message.split("USER QUESTION: ")[-1]
+                if "USER QUESTION: " in message
                 else message
             )
         else:

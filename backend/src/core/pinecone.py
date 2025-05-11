@@ -42,7 +42,7 @@ def build_pinecone_session(text_chunks: List[str], session_id: str):
     vectorstore.add_documents(documents)
 
 
-def load_pinecone_retriever(session_id: str, top_k: int = 3):
+def load_pinecone_retriever(session_id: str, top_k: int = 4):
     vectorstore = PineconeVectorStore(
         index=pinecone_index, embedding=embedding_model, text_key="text"
     )

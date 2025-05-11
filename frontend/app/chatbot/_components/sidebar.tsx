@@ -15,7 +15,7 @@ function Sidebar() {
   const chatId = useParams<{ id: string }>().id;
 
   return (
-    <div className="flex h-screen w-full flex-col border-r bg-card p-4 text-card-foreground">
+    <div className="flex h-full w-full flex-col border-r bg-card p-4 text-card-foreground">
       <Link href="/" className="w-full text-center font-medium">
         VakilSahab.ai
       </Link>

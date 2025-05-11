@@ -98,9 +98,9 @@ async def process_query(
     chain = get_llm_chain()
 
     combined_input = (
-        f"System Context:\n{main_context}\n\n"
-        f"Session Context:\n{session_context or 'None'}\n\n"
-        f"User question: {query}"
+        f"RELEVENT SYSTEM CONTEXT:\n{main_context}\n\n"
+        f"RELEVENT SESSION CONTEXT:\n{session_context or 'None'}\n\n"
+        f"USER QUESTION: {query}"
     )
 
     return StreamingResponse(

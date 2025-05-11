@@ -1,6 +1,7 @@
 import { Fragment } from "react";
 import { useUser } from "@clerk/nextjs";
 
+import MarkdownRenderer from "@/components/features/markdown-render";
 import { IconLoader } from "@/lib/icons";
 import { Chat } from "@/types";
 
@@ -29,8 +30,8 @@ function ChatsContainer({
                 </div>
               )}
               {message.type === "ai" && (
-                <div className="block w-full rounded-lg p-2 text-sm text-secondary-foreground">
-                  {message.message}
+                <div className="block w-full space-y-2 rounded-lg p-2 text-sm text-secondary-foreground">
+                  <MarkdownRenderer markdown={message.message} />
                 </div>
               )}
             </Fragment>

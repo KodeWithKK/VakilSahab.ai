@@ -42,8 +42,8 @@ async def get_history(request: Request, session_id: str):
             mssg_type = "user"
             message = msg.content
             message = (
-                message.split("User question: ")[-1]
-                if "User question: " in message
+                message.split("USER QUESTION: ")[-1]
+                if "USER QUESTION: " in message
                 else message
             )
         elif isinstance(msg, AIMessage):

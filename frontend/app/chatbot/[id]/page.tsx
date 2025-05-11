@@ -32,10 +32,10 @@ function ChatBot() {
   }, [chatId, chat, fetchChat]);
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="bg-background">
       <button
         type="button"
-        className="fixed left-3 top-4 rounded-lg p-1 hover:bg-secondary/80"
+        className="fixed left-3 top-4 z-50 rounded-lg p-1 hover:bg-secondary/80"
         onClick={() => setShowSidebar((prev) => !prev)}
       >
         <IconSidebar className="h-5 w-5 text-muted-foreground" />
@@ -43,21 +43,32 @@ function ChatBot() {
 
       <div
         className={cn(
-          "w-64 flex-shrink-0 transition-all",
-          !showSidebar && "-ml-64",
+          "fixed left-0 top-0 z-20 h-screen w-64 flex-shrink-0 transition-all",
+          !showSidebar && "-left-64",
         )}
       >
         <Sidebar />
       </div>
 
-      {/* Main Chat Area */}
-      <div className="flex flex-grow flex-col">
+      <div
+        className={cn(
+          "flex flex-grow flex-col pb-[113px] pl-64 transition-all",
+          !showSidebar && "pl-0",
+        )}
+      >
         <ChatsContainer
           messages={chat ? chat.messages : []}
           isStreaming={chat ? chat.isStreaming : false}
           showLoadingSkelton={!chat || isChatLoading}
         />
+      </div>
 
+      <div
+        className={cn(
+          "fixed bottom-0 z-10 w-full bg-background pl-64 transition-all",
+          !showSidebar && "pl-0",
+        )}
+      >
         <InputContainer
           inputValue={input}
           onInputChange={(value) => setInput(value)}
