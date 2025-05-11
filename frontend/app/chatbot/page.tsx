@@ -12,11 +12,9 @@ import Sidebar from "./_components/sidebar";
 
 function ChatBot() {
   const [input, setInput] = useState("");
-  const [showSkelton, setShowSkelton] = useState(false);
-  const [isStreaming, setIsStreaming] = useState(false);
   const [showSidebar, setShowSidebar] = useState(true);
 
-  const { handleQuery } = useAppContext();
+  const { showSkelton, handleQuery } = useAppContext();
 
   return (
     <div className="flex h-screen bg-background">
@@ -45,20 +43,20 @@ function ChatBot() {
               ? [
                   {
                     type: "user",
-                    message: input || "hi, I have a legal question",
+                    message: input,
                   },
                 ]
               : []
           }
-          isStreaming={isStreaming}
+          isStreaming={showSkelton}
         />
 
         <InputContainer
           inputValue={input}
           onInputChange={(value) => setInput(value)}
-          onSubmit={() => {
-            setInput("");
-            handleQuery(null, input);
+          onSubmit={async () => {
+            await handleQuery(null, input);
+            // setInput("");
           }}
           disableSubmit={showSkelton || !input.trim()}
         />

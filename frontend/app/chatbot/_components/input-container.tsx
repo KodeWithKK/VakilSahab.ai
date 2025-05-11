@@ -31,10 +31,13 @@ function InputContainer({
           className="rounded-b-none border-0 p-1"
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
               btnSubmit.current?.click();
             }
           }}
-          onChange={(e) => onInputChange(e.target.value)}
+          onChange={(e) => {
+            onInputChange(e.currentTarget.value);
+          }}
         />
         <div className="flex justify-between">
           <button

@@ -7,7 +7,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import axios from "axios";
 import { produce } from "immer";
@@ -19,6 +19,7 @@ interface IAppContext {
   chats: Chat[];
   chatInfos: ChatInfo[];
   isChatsInfoLoading: boolean;
+  showSkelton: boolean;
   handleQuery: (chatId: string | null, message: string) => Promise<void>;
   fetchChat: (chatId: string) => Promise<void>;
   deleteChat: (chatId: string) => Promise<void>;
@@ -36,10 +37,11 @@ function AppProvider({ children }: { children: React.ReactNode }) {
   const [chats, setChats] = useState<Chat[]>([]);
   const [chatInfos, setChatInfos] = useState<ChatInfo[]>([]);
   const [isChatsInfoLoading, setIsChatsInfoLoading] = useState(false);
+  const [showSkelton, setShowSkelton] = useState(false);
 
   const router = useRouter();
   const { isSignedIn, getToken } = useAuth();
-
+  const pathname = usePathname();
   useEffect(() => {
     if (isSignedIn) {
       (async () => {
@@ -60,6 +62,10 @@ function AppProvider({ children }: { children: React.ReactNode }) {
 
   const handleQuery = useCallback(
     async (chatId: string | null, query: string) => {
+      if (pathname === "/chatbot") {
+        setShowSkelton(true);
+      }
+
       const formData = new FormData();
       formData.append("query", query);
 
@@ -128,6 +134,7 @@ function AppProvider({ children }: { children: React.ReactNode }) {
               chat.isStreaming = false;
             }),
           );
+          setShowSkelton(false);
         },
       );
     },
@@ -188,6 +195,7 @@ function AppProvider({ children }: { children: React.ReactNode }) {
         handleQuery,
         chatInfos,
         isChatsInfoLoading,
+        showSkelton,
         fetchChat,
         deleteChat,
       }}
