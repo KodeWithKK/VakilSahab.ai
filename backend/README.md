@@ -1,6 +1,30 @@
-# How to run the project
+# Docker Guide
 
-## Set Current Directory
+- make sure you set current directory as the `backend` folder directory
+
+## Build Image
+
+```shell
+docker-compose build
+```
+
+## Spin up Container
+
+```shell
+# With Attached Terminal
+docker-compose up
+
+# With Detached Terminal
+docker-compose up -d
+```
+
+## Spin down Container
+
+```shell
+docker-compose down
+```
+
+# How to run the project
 
 - make sure you set current directory as the `backend` folder directory
 
@@ -10,15 +34,11 @@
 
 ## Install Dependencies
 
-- Recommended Way
-
 ```shell
+# Recommended Way
 uv sync
-```
 
-- Other way
-
-```shell
+# Other way
 uv pip install -r pyproject.toml
 ```
 
