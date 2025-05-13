@@ -4,13 +4,13 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
-import { useAppContext } from "@/contexts/app-provider";
+import { useChatbotContext } from "@/contexts/chatbot-provider";
 import { IconDelete, IconLoader } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 
 function Sidebar() {
   const router = useRouter();
-  const { chatInfos, isChatsInfoLoading, deleteChat } = useAppContext();
+  const { chatInfos, isChatsInfoLoading, deleteChat } = useChatbotContext();
 
   const chatId = useParams<{ id: string }>().id;
 

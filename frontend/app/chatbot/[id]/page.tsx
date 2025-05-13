@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 
-import { useAppContext } from "@/contexts/app-provider";
+import { useChatbotContext } from "@/contexts/chatbot-provider";
 import { IconSidebar } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 
@@ -12,12 +12,12 @@ import InputContainer from "../_components/input-container";
 import Sidebar from "../_components/sidebar";
 
 function ChatBot() {
-  const [input, setInput] = useState("");
   const [showSidebar, setShowSidebar] = useState(true);
   const [isChatLoading, setIsChatLoading] = useState(false);
 
   const chatId = useParams<{ id: string }>().id;
-  const { chats, handleQuery, fetchChat } = useAppContext();
+  const { input, setInput, files, setFiles, chats, handleQuery, fetchChat } =
+    useChatbotContext();
 
   const chat = useMemo(
     () => chats.find((chat) => chat.id === chatId),
@@ -25,7 +25,7 @@ function ChatBot() {
   );
 
   useEffect(() => {
-    if (chatId && !chat) {
+    if (chatId && !chat && !isChatLoading) {
       setIsChatLoading(true);
       fetchChat(chatId).then(() => setIsChatLoading(false));
     }
@@ -70,12 +70,11 @@ function ChatBot() {
         )}
       >
         <InputContainer
+          files={files}
+          setFiles={setFiles}
           inputValue={input}
           onInputChange={(value) => setInput(value)}
-          onSubmit={() => {
-            setInput("");
-            handleQuery(chatId, input);
-          }}
+          onSubmit={handleQuery}
           disableSubmit={(chat ? chat.isStreaming : false) || !input.trim()}
         />
       </div>

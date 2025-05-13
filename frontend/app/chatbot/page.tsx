@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { useAppContext } from "@/contexts/app-provider";
+import { useChatbotContext } from "@/contexts/chatbot-provider";
 import { IconSidebar } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 
@@ -11,10 +11,17 @@ import InputContainer from "./_components/input-container";
 import Sidebar from "./_components/sidebar";
 
 function ChatBot() {
-  const [input, setInput] = useState("");
   const [showSidebar, setShowSidebar] = useState(true);
 
-  const { showSkelton, handleQuery } = useAppContext();
+  const {
+    input,
+    setInput,
+    files,
+    setFiles,
+    skeltonQuery,
+    showSkelton,
+    handleQuery,
+  } = useChatbotContext();
 
   return (
     <div className="bg-background">
@@ -47,7 +54,7 @@ function ChatBot() {
               ? [
                   {
                     type: "user",
-                    message: input,
+                    message: skeltonQuery,
                   },
                 ]
               : []
@@ -63,12 +70,12 @@ function ChatBot() {
         )}
       >
         <InputContainer
+          files={files}
+          setFiles={setFiles}
           inputValue={showSkelton ? "" : input}
           onInputChange={(value) => setInput(value)}
-          onSubmit={async () => {
-            await handleQuery(null, input);
-          }}
-          disableSubmit={showSkelton || !input.trim()}
+          onSubmit={handleQuery}
+          disableSubmit={!input.trim()}
         />
       </div>
     </div>
