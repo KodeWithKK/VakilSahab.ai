@@ -38,21 +38,28 @@ async def get_history(request: Request, session_id: str):
     chat_history = []
 
     for msg in redis_chat_history:
+        payload = {}
         if isinstance(msg, HumanMessage):
-            mssg_type = "user"
-            message = msg.content
-            message = (
-                message.split("### USER QUESTION:\n")[-1]
-                if "### USER QUESTION:\n" in message
-                else message
+            payload["id"] = msg.id
+            payload["type"] = "user"
+            content = msg.content
+            content = (
+                content.split("### USER QUESTION:\n")[-1]
+                if "### USER QUESTION:\n" in content
+                else content
             )
+            payload["content"] = content
+            payload["files"] = msg.additional_kwargs.get("files", [])
+            payload["createdAt"] = msg.additional_kwargs.get("createdAt", "")
+
         elif isinstance(msg, AIMessage):
-            mssg_type = "ai"
-            message = msg.content
+            payload["id"] = msg.id
+            payload["type"] = "ai"
+            payload["content"] = msg.content
         else:
             continue
 
-        chat_history.append({"type": mssg_type, "message": message})
+        chat_history.append(payload)
 
     return ApiResponse.success(data=chat_history)
 

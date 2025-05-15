@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import { produce } from "immer";
+import { v4 as uuid } from "uuid";
 
 import { fetchSSE } from "@/lib/fetch-sse";
 import { Chat, ChatInfo } from "@/types";
@@ -45,6 +46,11 @@ function useHandleQuery({
     const formData = new FormData();
     formData.append("query", query);
 
+    const filesMetadata = files.map((file) => ({
+      filename: file.name,
+      content_type: file.type,
+    }));
+
     if (files.length > 0) {
       for (const file of files) {
         formData.append("files", file);
@@ -57,8 +63,18 @@ function useHandleQuery({
         produce((draft) => {
           const chat = draft.find((chat) => chat.id === validChatId);
           if (!chat) return;
-          chat.messages.push({ type: "user", message: query });
-          chat.messages.push({ type: "ai", message: "" });
+          chat.messages.push({
+            id: uuid(),
+            type: "user",
+            content: query,
+            createdAt: new Date().toISOString(),
+            files: filesMetadata,
+          });
+          chat.messages.push({
+            id: uuid(),
+            type: "ai",
+            content: "",
+          });
           chat.isStreaming = true;
         }),
       );
@@ -85,8 +101,14 @@ function useHandleQuery({
               draft.push({
                 id: chatId,
                 messages: [
-                  { type: "user", message: query },
-                  { type: "ai", message: "" },
+                  {
+                    id: uuid(),
+                    type: "user",
+                    content: query,
+                    createdAt: new Date().toISOString(),
+                    files: filesMetadata,
+                  },
+                  { id: uuid(), type: "ai", content: "" },
                 ],
                 isStreaming: true,
               });
@@ -105,7 +127,7 @@ function useHandleQuery({
             produce((draft) => {
               const chat = draft.find((chat) => chat.id === validChatId);
               if (!chat) return;
-              chat.messages[chat.messages.length - 1].message +=
+              chat.messages[chat.messages.length - 1].content +=
                 parsedData.data;
             }),
           );

@@ -2,7 +2,7 @@ import { Fragment } from "react";
 import { useUser } from "@clerk/nextjs";
 
 import MarkdownRenderer from "@/components/features/markdown-render";
-import { IconLoader } from "@/lib/icons";
+import { IconFile, IconLoader } from "@/lib/icons";
 import { Chat } from "@/types";
 
 interface ChatContainerProps {
@@ -22,16 +22,36 @@ function ChatsContainer({
     <div className="mx-auto flex w-[70%] flex-grow flex-col overflow-y-auto py-5">
       <div className="flex flex-col gap-2">
         {!showLoadingSkelton &&
-          messages.map((message, index) => (
-            <Fragment key={`message-${index}`}>
+          messages.map((message) => (
+            <Fragment key={message.id}>
               {message.type === "user" && (
-                <div className="ml-auto block rounded-lg bg-secondary px-3 py-2 text-sm text-secondary-foreground">
-                  {message.message}
+                <div className="ml-auto max-w-[70%] space-y-1.5">
+                  <div>
+                    {message.files.map((file, index) => (
+                      <div
+                        key={`${file.filename}-${index}`}
+                        className="relative flex items-center gap-2 rounded-lg border p-1 pr-4"
+                      >
+                        <div className="flex-shrink-0 rounded-md bg-pink-500 p-2">
+                          <IconFile className="h-5" />
+                        </div>
+                        <div className="space-y-0.5">
+                          <p className="max-w-36 truncate text-sm">
+                            {file.filename}
+                          </p>
+                          <p className="text-xs text-muted-foreground">PDF</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="rounded-lg bg-secondary px-3 py-2 text-sm text-secondary-foreground">
+                    <MarkdownRenderer markdown={message.content} />
+                  </div>
                 </div>
               )}
               {message.type === "ai" && (
-                <div className="block w-full space-y-2 rounded-lg p-2 text-sm text-secondary-foreground">
-                  <MarkdownRenderer markdown={message.message} />
+                <div className="w-full space-y-2 rounded-lg p-2 text-sm text-secondary-foreground">
+                  <MarkdownRenderer markdown={message.content} />
                 </div>
               )}
             </Fragment>
@@ -39,8 +59,8 @@ function ChatsContainer({
       </div>
 
       {!showLoadingSkelton && messages.length === 0 && (
-        <div className="grid h-[calc(100vh-113px-32px)] place-items-center py-10">
-          <h2 className="-mt-10 text-center text-2xl font-semibold">
+        <div className="grid place-items-center pt-[calc(50vh-113px)]">
+          <h2 className="text-center text-2xl font-semibold">
             Hello, {user?.firstName}
           </h2>
         </div>

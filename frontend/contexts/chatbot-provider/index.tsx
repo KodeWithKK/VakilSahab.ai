@@ -92,6 +92,8 @@ function ChatbotProvider({ children }: { children: React.ReactNode }) {
         )
         .then((res) => res.data.data)
         .then((data) => {
+          console.log(data);
+
           setChats(
             produce((draft) => {
               draft.push({

@@ -53,8 +53,11 @@ function ChatBot() {
             showSkelton
               ? [
                   {
+                    id: "skelton",
                     type: "user",
-                    message: skeltonQuery,
+                    content: skeltonQuery,
+                    files: [],
+                    createdAt: new Date().toISOString(),
                   },
                 ]
               : []

@@ -6,6 +6,7 @@ from typing import List, Optional
 from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile
 from fastapi.responses import StreamingResponse
 from fastapi.security import HTTPBearer
+from langchain.schema import HumanMessage
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from src.core.clerk import get_user_id
 from src.core.llm import get_llm_chain
@@ -39,12 +40,22 @@ async def stream_query(
     combined_input: str,
     session_id: str,
     new_session_info: dict = None,
+    file_metadata: list = [],
 ):
     if new_session_info:
         yield f"{json.dumps({'event': 'new-session-info', 'data': new_session_info})}\n\n"
 
+    human_message = HumanMessage(
+        content=combined_input,
+        additional_kwargs={
+            "createdAt": datetime.now(timezone.utc).isoformat(),
+            "files": file_metadata,
+        },
+        id=str(uuid.uuid4()),
+    )
+
     async for chunk in chain.astream(
-        {"input": combined_input},
+        {"input": human_message},
         config={"configurable": {"session_id": session_id}},
     ):
         yield f"{json.dumps({'event': 'next-chunk', 'data': chunk.content})}\n\n"
@@ -73,11 +84,15 @@ async def process_query(
     if not redis_client.sismember(f"user:{user_id}:sessions", session_id):
         raise HTTPException(status_code=403, detail="Unauthorized request")
 
+    file_metadata = []
     if files:
         session_dir = f"temp/{session_id}"
         file_paths = await save_upload_files(session_dir, files)
         await process_files_and_build_index(file_paths, session_id)
         redis_client.sadd("sessions:with_docs", session_id)
+        file_metadata = [
+            {"filename": f.filename, "content_type": f.content_type} for f in files
+        ]
 
     user_questions = get_all_user_questions(session_id)
     user_questions.append(query)
@@ -104,6 +119,8 @@ async def process_query(
     )
 
     return StreamingResponse(
-        stream_query(chain, combined_input, session_id, new_session_info),
+        stream_query(
+            chain, combined_input, session_id, new_session_info, file_metadata
+        ),
         media_type="text/event-stream",
     )
