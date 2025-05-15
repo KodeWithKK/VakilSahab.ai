@@ -11,7 +11,7 @@ import { useAuth } from "@clerk/nextjs";
 import axios from "axios";
 import { produce } from "immer";
 
-import { ApiResponse, Chat, ChatInfo } from "@/types";
+import { ApiResponse, Chat, ChatInfo, UserMessage } from "@/types";
 
 import useHandleQuery from "./use-handle-query";
 
@@ -24,6 +24,7 @@ interface IChatbotContext {
   chatInfos: ChatInfo[];
   isChatsInfoLoading: boolean;
   skeltonQuery: string;
+  skeltonFiles: UserMessage["files"];
   showSkelton: boolean;
   handleQuery: () => Promise<void>;
   fetchChat: (chatId: string) => Promise<void>;
@@ -45,6 +46,7 @@ function ChatbotProvider({ children }: { children: React.ReactNode }) {
   const [chatInfos, setChatInfos] = useState<ChatInfo[]>([]);
   const [isChatsInfoLoading, setIsChatsInfoLoading] = useState(false);
   const [skeltonQuery, setSkeltonQuery] = useState("");
+  const [skeltonFiles, setSkeltonFiles] = useState<UserMessage["files"]>([]);
   const [showSkelton, setShowSkelton] = useState(false);
 
   const { isSignedIn, getToken } = useAuth();
@@ -76,6 +78,7 @@ function ChatbotProvider({ children }: { children: React.ReactNode }) {
     setShowSkelton,
     setChatInfos,
     setSkeltonQuery,
+    setSkeltonFiles,
   });
 
   const fetchChat = useCallback(
@@ -92,8 +95,6 @@ function ChatbotProvider({ children }: { children: React.ReactNode }) {
         )
         .then((res) => res.data.data)
         .then((data) => {
-          console.log(data);
-
           setChats(
             produce((draft) => {
               draft.push({
@@ -140,6 +141,7 @@ function ChatbotProvider({ children }: { children: React.ReactNode }) {
         chatInfos,
         isChatsInfoLoading,
         skeltonQuery,
+        skeltonFiles,
         showSkelton,
         fetchChat,
         deleteChat,

@@ -5,7 +5,7 @@ import { produce } from "immer";
 import { v4 as uuid } from "uuid";
 
 import { fetchSSE } from "@/lib/fetch-sse";
-import { Chat, ChatInfo } from "@/types";
+import { Chat, ChatInfo, UserMessage } from "@/types";
 
 const BACKEND_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -18,6 +18,7 @@ interface UseHandleQueryProps {
   setChats: React.Dispatch<React.SetStateAction<Chat[]>>;
   setChatInfos: React.Dispatch<React.SetStateAction<ChatInfo[]>>;
   setSkeltonQuery: React.Dispatch<React.SetStateAction<string>>;
+  setSkeltonFiles: React.Dispatch<React.SetStateAction<UserMessage["files"]>>;
 }
 
 function useHandleQuery({
@@ -29,6 +30,7 @@ function useHandleQuery({
   setShowSkelton,
   setChatInfos,
   setSkeltonQuery,
+  setSkeltonFiles,
 }: UseHandleQueryProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -37,11 +39,6 @@ function useHandleQuery({
 
   const handleQuery = useCallback(async () => {
     const query = input.trim();
-
-    if (pathname === "/chatbot") {
-      setShowSkelton(true);
-      setSkeltonQuery(query);
-    }
 
     const formData = new FormData();
     formData.append("query", query);
@@ -55,6 +52,12 @@ function useHandleQuery({
       for (const file of files) {
         formData.append("files", file);
       }
+    }
+
+    if (pathname === "/chatbot") {
+      setShowSkelton(true);
+      setSkeltonQuery(query);
+      setSkeltonFiles(filesMetadata);
     }
 
     if (chatId) {
@@ -142,6 +145,8 @@ function useHandleQuery({
           }),
         );
         setShowSkelton(false);
+        setSkeltonQuery("");
+        setSkeltonFiles([]);
       },
     );
   }, [

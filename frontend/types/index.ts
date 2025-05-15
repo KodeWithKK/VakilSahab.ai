@@ -2,7 +2,7 @@ export * from "./api-response";
 export * from "./query-sse";
 export * from "./user";
 
-interface UserMessage {
+export interface UserMessage {
   id: string;
   type: "user";
   content: string;
@@ -10,7 +10,7 @@ interface UserMessage {
   createdAt: string;
 }
 
-interface AIResponseMessage {
+export interface AIResponseMessage {
   id: string;
   type: "ai";
   content: string;

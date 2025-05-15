@@ -19,6 +19,7 @@ function ChatBot() {
     files,
     setFiles,
     skeltonQuery,
+    skeltonFiles,
     showSkelton,
     handleQuery,
   } = useChatbotContext();
@@ -56,7 +57,7 @@ function ChatBot() {
                     id: "skelton",
                     type: "user",
                     content: skeltonQuery,
-                    files: [],
+                    files: skeltonFiles,
                     createdAt: new Date().toISOString(),
                   },
                 ]
