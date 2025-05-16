@@ -1,6 +1,6 @@
-# Docker Guide
+# How to run backend using docker
 
-- make sure you set current directory as the `backend` folder directory
+- Make sure you set `backend` folder as the current working directory
 
 ## Build Image
 
@@ -11,10 +11,10 @@ docker-compose build
 ## Spin up Container
 
 ```shell
-# With Attached Terminal
+# With Terminal Attached
 docker-compose up
 
-# With Detached Terminal
+# With Terminal Detached
 docker-compose up -d
 ```
 
@@ -24,9 +24,9 @@ docker-compose up -d
 docker-compose down
 ```
 
-# How to run the project
+# How to run backend locally
 
-- make sure you set current directory as the `backend` folder directory
+- Make sure you set `backend` folder as the current working directory
 
 ## Install uv
 
