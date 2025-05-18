@@ -4,7 +4,6 @@ import { WebhookEvent } from "@clerk/nextjs/server";
 import { Webhook } from "svix";
 
 import { addUser, deleteUser, updateUser } from "@/actions/user.action";
-import { UserInsert, UserUpdate } from "@/types";
 
 export async function POST(req: Request) {
   const SIGNING_SECRET = process.env.SIGNING_SECRET;
@@ -59,13 +58,12 @@ export async function POST(req: Request) {
   if (eventType === "user.created") {
     const { id, email_addresses, image_url, first_name, last_name } = evt.data;
 
-    const user: UserInsert = {
+    const user = {
       id,
       email: email_addresses[0].email_address,
       firstName: first_name || "",
       lastName: last_name || "",
       photo: image_url,
-      role: "USER",
     };
     try {
       await addUser(user);
@@ -78,7 +76,7 @@ export async function POST(req: Request) {
   if (eventType === "user.updated") {
     const { id, email_addresses, image_url, first_name, last_name } = evt.data;
 
-    const user: UserUpdate = {
+    const user = {
       email: email_addresses[0].email_address,
       firstName: first_name || "",
       lastName: last_name || "",

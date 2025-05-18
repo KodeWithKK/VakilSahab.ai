@@ -1,8 +1,11 @@
 "use client";
 
-import { createContext, useContext } from "react";
+import { createContext, useContext, useState } from "react";
 
-interface IAppContext {}
+interface IAppContext {
+  showSidebar: boolean;
+  setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
 const AppContext = createContext<IAppContext | null>(null);
 
@@ -11,7 +14,12 @@ export const useAppContext = () => {
 };
 
 function AppProvider({ children }: { children: React.ReactNode }) {
-  return <AppContext.Provider value={null}>{children}</AppContext.Provider>;
+  const [showSidebar, setShowSidebar] = useState(true);
+  return (
+    <AppContext.Provider value={{ showSidebar, setShowSidebar }}>
+      {children}
+    </AppContext.Provider>
+  );
 }
 
 export default AppProvider;

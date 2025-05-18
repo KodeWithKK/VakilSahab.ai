@@ -5,7 +5,13 @@ import { useCallback, useRef } from "react";
 import UploadFiles from "@/components/features/upload-files";
 import TextArea from "@/components/ui/text-area";
 import { formatFileSize } from "@/lib/format-string";
-import { IconArrowUp, IconAttach, IconClose, IconFile } from "@/lib/icons";
+import {
+  IconArrowUp,
+  IconAttach,
+  IconClose,
+  IconFile,
+  IconMic,
+} from "@/lib/icons";
 import { cn } from "@/lib/utils";
 
 interface InputContainerProps {
@@ -63,18 +69,29 @@ function InputContainer({
             <IconAttach className="h-4 text-muted-foreground" />
             <span className="text-sm text-muted-foreground">Attach</span>
           </UploadFiles>
-          <button
-            ref={btnSubmit}
-            type="button"
-            className={cn(
-              "rounded-full bg-foreground p-1 text-primary-foreground",
-              disableSubmit && "bg-foreground/50",
-            )}
-            onClick={onSubmit}
-            disabled={disableSubmit}
-          >
-            <IconArrowUp className="h-6 text-background" />
-          </button>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              className={cn(
+                "grid h-8 w-8 place-items-center rounded-full border text-primary-foreground",
+                disableSubmit && "",
+              )}
+            >
+              <IconMic className="h-5 text-muted-foreground" />
+            </button>
+            <button
+              ref={btnSubmit}
+              type="button"
+              className={cn(
+                "rounded-full bg-foreground p-1 text-primary-foreground",
+                disableSubmit && "bg-foreground/50",
+              )}
+              onClick={onSubmit}
+              disabled={disableSubmit}
+            >
+              <IconArrowUp className="h-6 text-background" />
+            </button>
+          </div>
         </div>
       </div>
     </div>

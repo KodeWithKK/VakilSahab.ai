@@ -1,19 +1,30 @@
 "use server";
 
-import axios from "axios";
+import { eq } from "drizzle-orm";
 
-import { UserInsert, UserUpdate } from "@/types";
-
-const BACKEND_BASE = process.env.NEXT_PUBLIC_BACKEND_URL;
+import { db } from "@/db/config";
+import {
+  userInsertSchema,
+  users,
+  userUpdateSchema,
+  type UserInsert,
+  type UserUpdate,
+} from "@/db/schema";
 
 export const addUser = async (user: UserInsert) => {
-  return axios.post(`${BACKEND_BASE}/api/user`, user);
+  const { data, success } = userInsertSchema.safeParse(user);
+
+  if (!success) throw new Error("Invalid user data");
+  await db.insert(users).values(data);
 };
 
 export const updateUser = async (userId: string, user: UserUpdate) => {
-  return axios.put(`${BACKEND_BASE}/api/user/${userId}`, user);
+  const { data, success } = userUpdateSchema.safeParse(user);
+
+  if (!success) throw new Error("Invalid user data");
+  await db.update(users).set(data).where(eq(users.id, userId));
 };
 
 export const deleteUser = async (userId: string) => {
-  return axios.delete(`${BACKEND_BASE}/api/user/${userId}`);
+  await db.delete(users).where(eq(users.id, userId));
 };
