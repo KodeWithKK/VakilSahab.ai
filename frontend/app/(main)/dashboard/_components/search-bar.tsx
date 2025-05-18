@@ -1,5 +1,5 @@
 import { Input } from "@/components/ui/input";
-import { IconFilterFill, IconSearch } from "@/lib/icons";
+import { IconFilterSolid, IconSearch } from "@/lib/icons";
 
 function SearchBar() {
   return (
@@ -16,7 +16,7 @@ function SearchBar() {
           type="button"
           className="flex items-center gap-2 rounded-lg border px-4 py-3 pr-5"
         >
-          <IconFilterFill className="h-5 text-muted-foreground" />
+          <IconFilterSolid className="h-5 text-muted-foreground" />
           <span className="text-sm">Filter</span>
         </button>
       </div>
