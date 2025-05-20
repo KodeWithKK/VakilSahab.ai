@@ -1,0 +1,30 @@
+export const defaultLawyerSpecialization: [string, ...string[]] = [
+  "Family Lawyer Specialist",
+  "Corporate Attorney",
+  "Criminal Defense Attorney",
+  "Real Estate Attorney",
+  "Immigration Attorney",
+  "Personal Injury Attorne",
+];
+
+export const defaultLawyerServices: [string, ...string[]] = [
+  "Divorce",
+  "Child Custody",
+  "Mediation",
+  "Contracts",
+  "Business Law",
+  "Mergers",
+  "Criminal Defense",
+  "DUI",
+  "Appeals",
+  "Property Law",
+  "Leasing",
+  "Zoning",
+  "Visas",
+  "Green Cards",
+  "Citizenship",
+  "Car Accidents",
+  "Medical Malpractice",
+  "Workplace Injuries",
+  "Other",
+];

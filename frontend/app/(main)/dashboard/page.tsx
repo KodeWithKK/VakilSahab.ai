@@ -1,25 +1,38 @@
+"use client";
+
+import { useState } from "react";
+
 import { Button } from "@/components/ui/button";
 import { IconCall, IconLawyerSolid, IconMail } from "@/lib/icons";
 
+import LawyerRegisterationForm from "./_components/lawyer-registeration-form";
 import SearchBar from "./_components/search-bar";
 import { dummyLawyersData, popularCategories } from "./constant";
 
 function Dashboard() {
+  const [showLawyerRegistrationForm, setShowLawyerRegistrationForm] =
+    useState(false);
+
   return (
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">Find Lawyer</h2>
-        <div>
-          <Button
-            type="button"
-            variant={"secondary"}
-            className="flex items-center gap-2 rounded-full border bg-secondary/60"
-          >
-            <IconLawyerSolid className="h-5" />
-            <span>Register as Lawyer</span>
-          </Button>
-        </div>
+        <Button
+          type="button"
+          variant={"secondary"}
+          className="flex items-center gap-2 rounded-full border bg-secondary/60"
+          onClick={() => setShowLawyerRegistrationForm(true)}
+        >
+          <IconLawyerSolid className="h-5" />
+          <span>Register as Lawyer</span>
+        </Button>
       </div>
+
+      <LawyerRegisterationForm
+        showModal={showLawyerRegistrationForm}
+        onClose={() => setShowLawyerRegistrationForm(false)}
+      />
+
       <SearchBar />
 
       <div className="space-y-4">
@@ -108,12 +121,6 @@ function Dashboard() {
           ))}
         </div>
       </div>
-
-      {/* <div className="text-center">
-        <Button variant={"outline"} size={"lg"} className="rounded-lg">
-          Load More
-        </Button>
-      </div> */}
     </div>
   );
 }
