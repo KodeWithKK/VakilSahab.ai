@@ -1,0 +1,1 @@
+ALTER TABLE "lawyer_info" RENAME COLUMN "fees" TO "consultation_fees";

@@ -1,0 +1,1 @@
+ALTER TABLE "lawyer_info" RENAME COLUMN "tags" TO "servies";

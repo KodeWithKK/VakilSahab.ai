@@ -2,6 +2,7 @@ import { relations } from "drizzle-orm";
 import {
   foreignKey,
   integer,
+  jsonb,
   pgTable,
   real,
   text,
@@ -29,11 +30,11 @@ export const lawyerInfo = pgTable(
     userId: text("user_id").notNull(),
     specialization: text("specialization").notNull(),
     experienceInYears: real("experience").notNull(),
-    fees: integer("fees").notNull(),
+    consultationFees: integer("consultation_fees").notNull(),
     rating: real("rating"),
     reviewCount: integer("review_count"),
     bio: text("bio"),
-    tags: text("tags"),
+    services: jsonb("servies"),
   },
   (table) => [
     foreignKey({ columns: [table.userId], foreignColumns: [users.id] })
@@ -64,6 +65,10 @@ export const userUpdateSchema = createUpdateSchema(users).omit({
   createdAt: true,
   updatedAt: true,
 });
+export const lawyerInfoUpdateSchema = createUpdateSchema(lawyerInfo);
+export const lawyerInfoInsertSchema = createInsertSchema(lawyerInfo);
 
 export type UserInsert = z.infer<typeof userInsertSchema>;
 export type UserUpdate = z.infer<typeof userUpdateSchema>;
+export type LawyerInfoInsert = z.infer<typeof lawyerInfoInsertSchema>;
+export type LawyerInfoUpdate = z.infer<typeof lawyerInfoUpdateSchema>;

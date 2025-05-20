@@ -30,7 +30,7 @@ export const LawyerRegistrationSchema = z.object({
           ],
           { message: "Invalid service" },
         ),
-        other: z.string().optional(),
+        other: z.string().min(1, { message: "Enter Service name" }).optional(),
       }),
     )
     .min(1, { message: "Services is required" }),

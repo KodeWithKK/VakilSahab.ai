@@ -6,10 +6,14 @@ import { FormInput, FormSelect, FormTextArea } from "@/components/form-fields";
 import Modal from "@/components/layouts/modal";
 import { Button } from "@/components/ui/button";
 import {
+  insertLawyerInfo,
+  LawyerInfoInsertPayload,
+} from "@/actions/lawyer.action";
+import {
   defaultLawyerServices,
   defaultLawyerSpecialization,
 } from "@/lib/constant";
-import { IconClose, IconDelete, IconLawyerSolid } from "@/lib/icons";
+import { IconDelete, IconLawyerSolid } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 
 import { LawyerRegistrationSchema } from "../_schemas/lawyer-registeration";
@@ -27,6 +31,7 @@ function LawyerRegisterationForm({
     control,
     register,
     formState: { errors },
+    handleSubmit,
   } = useForm({
     resolver: zodResolver(LawyerRegistrationSchema),
     mode: "onChange",
@@ -41,11 +46,31 @@ function LawyerRegisterationForm({
   });
 
   const servicesWatch = useWatch({ control, name: "services" });
-  const currServiceIndex = servicesWatch.length - 1;
+
+  const onSubmit = handleSubmit(async (data) => {
+    const services: string[] = data.services.map((item) => {
+      if (item.value === "Other") {
+        return item?.other!;
+      }
+      return item.value;
+    });
+
+    const dataPayload: LawyerInfoInsertPayload = {
+      bio: data.bio,
+      specialization: data.specialization,
+      experienceInYears: data.experienceInYr,
+      consultationFees: data.consultationFees,
+      services: JSON.stringify(services),
+      phoneNumber: data.phoneNumber.toString(),
+    };
+
+    await insertLawyerInfo(dataPayload);
+    console.log("Lawyer data inserted successfully", dataPayload);
+  });
 
   return (
     <Modal showModal={showModal} onClose={onClose}>
-      <form action="">
+      <form onSubmit={onSubmit}>
         <h3 className="flex items-center gap-4 text-lg font-medium">
           <IconLawyerSolid className="h-4" />
           <span>Lawyer Registration Form</span>
@@ -85,35 +110,43 @@ function LawyerRegisterationForm({
 
             <div className="space-y-1">
               {servicesArray.fields.map((item, index) => (
-                <div key={item.id} className="flex items-center gap-2">
-                  <FormSelect
-                    control={control}
-                    registerName={`services.${index}.value`}
-                    className={cn(
-                      servicesWatch[index]?.value !== "Other" && "w-full",
-                    )}
-                    placeholder="Select your services"
-                    options={defaultLawyerServices.reduce(
-                      (acc: Record<string, string>, curr: string, i) => {
-                        acc[curr] = curr;
-                        return acc;
-                      },
-                      {},
-                    )}
-                  />
-                  {servicesWatch[currServiceIndex]?.value === "Other" && (
-                    <FormInput
-                      {...register(`services.${currServiceIndex}.other`)}
-                      placeholder="Enter your service"
+                <div key={item.id} className="">
+                  <div className="flex items-center gap-2">
+                    <FormSelect
+                      control={control}
+                      registerName={`services.${index}.value`}
+                      className={cn(
+                        servicesWatch[index]?.value !== "Other" && "w-full",
+                      )}
+                      placeholder="Select your services"
+                      options={defaultLawyerServices.reduce(
+                        (acc: Record<string, string>, curr: string, i) => {
+                          acc[curr] = curr;
+                          return acc;
+                        },
+                        {},
+                      )}
                     />
-                  )}
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => servicesArray.remove(index)}
-                  >
-                    <IconDelete className="h-5 text-muted-foreground" />
-                  </Button>
+
+                    {servicesWatch[index]?.value === "Other" && (
+                      <FormInput
+                        {...register(`services.${index}.other`)}
+                        placeholder="Enter your service"
+                      />
+                    )}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => servicesArray.remove(index)}
+                    >
+                      <IconDelete className="h-5 text-muted-foreground" />
+                    </Button>
+                  </div>
+
+                  <span className="text-sm text-red-500">
+                    {errors?.services?.[index]?.value?.message ||
+                      errors?.services?.[index]?.other?.message}
+                  </span>
                 </div>
               ))}
             </div>
@@ -123,7 +156,7 @@ function LawyerRegisterationForm({
               variant="secondary"
               size="sm"
               className="mt-1.5 flex items-center gap-2"
-              onClick={() => servicesArray.append({ value: "", other: "" })}
+              onClick={() => servicesArray.append({ value: "" })}
             >
               + Add Service
             </Button>

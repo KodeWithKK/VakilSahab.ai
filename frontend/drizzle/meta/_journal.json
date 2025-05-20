@@ -15,6 +15,20 @@
       "when": 1747539408533,
       "tag": "0001_bumpy_the_liberteens",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1747758161804,
+      "tag": "0002_minor_molly_hayes",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1747758184485,
+      "tag": "0003_absurd_stature",
+      "breakpoints": true
     }
   ]
 }
