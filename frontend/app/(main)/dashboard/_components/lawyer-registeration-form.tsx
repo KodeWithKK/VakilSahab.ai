@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
+import { toast } from "sonner";
 
 import { FormInput, FormSelect, FormTextArea } from "@/components/form-fields";
 import Modal from "@/components/layouts/modal";
@@ -13,7 +14,7 @@ import {
   defaultLawyerServices,
   defaultLawyerSpecialization,
 } from "@/lib/constant";
-import { IconDelete, IconLawyerSolid } from "@/lib/icons";
+import { IconDelete, IconLawyerSolid, IconLoader } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 
 import { LawyerRegistrationSchema } from "../_schemas/lawyer-registeration";
@@ -27,6 +28,8 @@ function LawyerRegisterationForm({
   showModal,
   onClose,
 }: LawyerRegisterationFormProps) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const {
     control,
     register,
@@ -63,9 +66,11 @@ function LawyerRegisterationForm({
       services: JSON.stringify(services),
       phoneNumber: data.phoneNumber.toString(),
     };
-
+    setIsSubmitting(true);
     await insertLawyerInfo(dataPayload);
-    console.log("Lawyer data inserted successfully", dataPayload);
+    setIsSubmitting(false);
+    toast.success("Lawyer registration successful!");
+    onClose();
   });
 
   return (
@@ -178,7 +183,10 @@ function LawyerRegisterationForm({
           />
         </div>
 
-        <Button className="w-full">Submit</Button>
+        <Button className="w-full" disabled={isSubmitting}>
+          {isSubmitting && <IconLoader className="mr-2 h-4 animate-spin" />}
+          <span>{isSubmitting ? "Submitting..." : "Submit"}</span>
+        </Button>
       </form>
     </Modal>
   );

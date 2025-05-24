@@ -15,6 +15,7 @@ export const useAppContext = () => {
 
 function AppProvider({ children }: { children: React.ReactNode }) {
   const [showSidebar, setShowSidebar] = useState(true);
+
   return (
     <AppContext.Provider value={{ showSidebar, setShowSidebar }}>
       {children}

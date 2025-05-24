@@ -1,0 +1,1 @@
+ALTER TABLE "lawyer_info" ADD PRIMARY KEY ("user_id");

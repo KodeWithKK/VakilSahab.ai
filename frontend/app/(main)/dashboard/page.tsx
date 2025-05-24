@@ -1,17 +1,27 @@
 "use client";
 
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
-import { IconCall, IconLawyerSolid, IconMail } from "@/lib/icons";
+import { getLawyersInfo } from "@/actions/lawyer.action";
+import { IconCall, IconLawyerSolid, IconLoader, IconMail } from "@/lib/icons";
 
 import LawyerRegisterationForm from "./_components/lawyer-registeration-form";
 import SearchBar from "./_components/search-bar";
-import { dummyLawyersData, popularCategories } from "./constant";
+import { fakeLawyersData, popularCategories } from "./constant";
 
 function Dashboard() {
   const [showLawyerRegistrationForm, setShowLawyerRegistrationForm] =
     useState(false);
+
+  const { data: topLawyers, isLoading } = useQuery({
+    queryKey: ["lawyerInfo"],
+    queryFn: async () => {
+      const lawyersInfo = await getLawyersInfo();
+      return [...(lawyersInfo ?? []), ...fakeLawyersData];
+    },
+  });
 
   return (
     <div className="space-y-6 p-6">
@@ -49,7 +59,7 @@ function Dashboard() {
               </div>
               <p className="text-sm">{category.name}</p>
               <p className="text-xs text-muted-foreground">
-                {category.tags.join(", ")}
+                {category.services.join(", ")}
               </p>
             </button>
           ))}
@@ -59,13 +69,22 @@ function Dashboard() {
       <div className="space-y-4">
         <h3 className="font-medium">Top Lawyers Near You</h3>
         <div className="grid grid-cols-[repeat(auto-fit,minmax(270px,1fr))] gap-6">
-          {dummyLawyersData.map((lawyer) => (
+          {isLoading && (
+            <div className="flex h-20 items-center justify-center">
+              <IconLoader className="h-7 animate-spin text-foreground" />
+            </div>
+          )}
+          {topLawyers?.map((lawyer) => (
             <div
               key={`lawyer-${lawyer.id}`}
               className="flex select-none flex-col space-y-4 rounded-lg border p-3 text-left align-top hover:bg-secondary/20"
             >
               <div className="flex gap-4">
-                <img src={lawyer.photo} className="h-16" alt="lawyer" />
+                <img
+                  src={lawyer.photo}
+                  className="h-16 rounded-full"
+                  alt="lawyer"
+                />
                 <div className="space-y-2">
                   <p className="font-bold">
                     {lawyer.firstName} {lawyer.lastName}
@@ -74,12 +93,12 @@ function Dashboard() {
                     {lawyer.specialization}
                   </p>
                   <div className="flex flex-wrap gap-1">
-                    {lawyer.tags.map((tag) => (
+                    {lawyer.services.map((service: string) => (
                       <span
-                        key={`tag-${lawyer.id}-${tag}`}
+                        key={`service-${lawyer.id}-${service}`}
                         className="rounded-full bg-secondary/60 p-1 px-2 text-xs"
                       >
-                        {tag}
+                        {service}
                       </span>
                     ))}
                   </div>
@@ -94,27 +113,25 @@ function Dashboard() {
                     Consultation Fee
                   </span>
                   <span className="font-medium">
-                    {lawyer.fees == 0
+                    {lawyer.consultationFees == 0
                       ? "Free Consultation"
-                      : `₹ ${lawyer.fees} / hour`}
+                      : `₹ ${lawyer.consultationFees} / hour`}
                   </span>
                 </div>
 
                 <div className="space-x-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="rounded-full bg-transparent"
+                  <a
+                    href={`tel:+91${lawyer.phoneNumber}`}
+                    className="inline-flex rounded-full border bg-transparent px-4 py-2 transition-colors hover:bg-secondary"
                   >
                     <IconCall className="h-5" />
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="rounded-full bg-transparent"
+                  </a>
+                  <a
+                    href={`mailto:${lawyer.email}`}
+                    className="inline-flex rounded-full border bg-transparent px-4 py-2 transition-colors hover:bg-secondary"
                   >
                     <IconMail className="h-5" />
-                  </Button>
+                  </a>
                 </div>
               </div>
             </div>

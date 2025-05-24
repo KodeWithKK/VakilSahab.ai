@@ -1,3 +1,4 @@
+import { table } from "console";
 import { relations } from "drizzle-orm";
 import {
   foreignKey,
@@ -27,12 +28,12 @@ export const users = pgTable("users", {
 export const lawyerInfo = pgTable(
   "lawyer_info",
   {
-    userId: text("user_id").notNull(),
+    userId: text("user_id").primaryKey(),
     specialization: text("specialization").notNull(),
     experienceInYears: real("experience").notNull(),
     consultationFees: integer("consultation_fees").notNull(),
-    rating: real("rating"),
-    reviewCount: integer("review_count"),
+    rating: real("rating").default(0),
+    reviewCount: integer("review_count").default(0),
     bio: text("bio"),
     services: jsonb("servies"),
   },
