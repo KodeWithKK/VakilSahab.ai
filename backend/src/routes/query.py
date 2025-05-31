@@ -98,9 +98,9 @@ async def process_query(
     user_questions.append(query)
     retriver_query = "\n".join(user_questions)
 
-    main_retriever = load_pinecone_retriever("MAIN", 4)
-    main_relevant_docs = await main_retriever.ainvoke(retriver_query)
-    main_context = "\n\n".join([doc.page_content for doc in main_relevant_docs])
+    # main_retriever = load_pinecone_retriever("MAIN", 4)
+    # main_relevant_docs = await main_retriever.ainvoke(retriver_query)
+    # main_context = "\n\n".join([doc.page_content for doc in main_relevant_docs])
 
     session_context = ""
     if redis_client.sismember("sessions:with_docs", session_id):
@@ -113,14 +113,14 @@ async def process_query(
     chain = get_llm_chain()
 
     combined_input = (
-        f"### RELEVANT SYSTEM CONTEXT FROM LEGAL CORPUS:\n{main_context}\n\n"
-        f"### RELEVANT USER CONTEXT FROM UPLOADED DOCUMENT:\n{session_context or 'None'}\n\n"
-        f"### USER QUESTION:\n{query}"
+        # f"### RELEVANT RAG CONTEXT:\n{main_context}\n\n"
+        f"### RELEVANT USER CONTEXT FROM UPLOADED DOCUMENT:\n{session_context or 'Not Provided'}\n\n"
+        f"{session_context}\n\n### USER QUESTION:\n{query}"
     )
 
     return StreamingResponse(
         stream_query(
-            chain, combined_input, session_id, new_session_info, file_metadata
+            chain, combined_input.strip(), session_id, new_session_info, file_metadata
         ),
         media_type="text/event-stream",
     )

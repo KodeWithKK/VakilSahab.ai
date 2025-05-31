@@ -40,11 +40,9 @@ function ChatbotSidebar() {
                 <button
                   type="button"
                   className="invisible flex-shrink-0 group-hover:visible"
-                  onClick={() => {
-                    if (chat.id === chatId) {
-                      router.push("/chatbot");
-                    }
-
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (chat.id === chatId) router.push("/chatbot");
                     deleteChat(chat.id);
                   }}
                 >
