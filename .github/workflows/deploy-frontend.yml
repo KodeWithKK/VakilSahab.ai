@@ -16,22 +16,21 @@ jobs:
       - name: Checkout Source
         uses: actions/checkout@v4
 
-      - name: Install docker-compose
-        run: |
-          sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-          sudo chmod +x /usr/local/bin/docker-compose
-          docker-compose --version
-
       - name: Create frontend .env file
         run: echo "${{ secrets.ENV_FILE }}" > .env
 
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-      - name: Build and Push Frontend Docker Image
+      - name: Build Docker Image
         run: |
-          docker-compose build vakilsahab-frontend
-          docker-compose push vakilsahab-frontend
+          docker build \
+            --build-arg NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}" \
+            -t ${{ secrets.DOCKER_USERNAME }}/vakilsahab-frontend:latest .
+
+      - name: Push Docker Image
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/vakilsahab-frontend:latest
 
   deploy:
     needs: build
@@ -48,7 +47,7 @@ jobs:
           ENV_FILE: ${{ secrets.ENV_FILE }}
         run: |
           ssh -o StrictHostKeyChecking=no -i key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} \
-          "echo \"$ENV_FILE\" > ~/vakilsahab/frontend/.env"
+          "mkdir -p ~/vakilsahab/frontend && echo \"$ENV_FILE\" > ~/vakilsahab/frontend/.env"
 
       - name: Docker Login on EC2
         env:
@@ -58,11 +57,23 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} \
           "echo \"$DOCKER_PASSWORD\" | docker login -u \"$DOCKER_USERNAME\" --password-stdin"
 
-      - name: Pull and Restart Frontend on EC2
+      - name: Pull and Run Frontend on EC2
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         run: |
           ssh -o StrictHostKeyChecking=no -i key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << EOF
-            cd ~/vakilsahab/frontend || exit 1
-            docker-compose pull vakilsahab-frontend
-            docker-compose down
-            docker-compose up -d vakilsahab-frontend
+            docker pull $DOCKER_USERNAME/vakilsahab-frontend:latest
+
+            # Stop and remove existing container if running
+            if [ \$(docker ps -q -f name=vakilsahab-frontend) ]; then
+              docker stop vakilsahab-frontend
+              docker rm vakilsahab-frontend
+            fi
+
+            # Run container with environment file, ports, restart policy
+            docker run -d --name vakilsahab-frontend \
+              --env-file ~/vakilsahab/frontend/.env \
+              -p 3000:3000 \
+              --restart unless-stopped \
+              $DOCKER_USERNAME/vakilsahab-frontend:latest
           EOF
