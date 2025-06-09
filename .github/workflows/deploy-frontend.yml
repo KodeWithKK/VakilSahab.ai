@@ -1,9 +1,10 @@
 name: Deploy Next.js Frontend
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch: # allows manual trigger
+  # push:
+  #   branches:
+  #     - main # triggers workflow automatically on push to main
 
 jobs:
   build:
