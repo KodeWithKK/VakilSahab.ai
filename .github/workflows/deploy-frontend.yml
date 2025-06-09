@@ -1,0 +1,62 @@
+name: Deploy Next.js Frontend
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v4
+
+      - name: Create frontend .env file
+        run: echo "${{ secrets.ENV_FILE }}" > .env
+
+      - name: Login to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Build and Push Frontend Docker Image
+        run: |
+          docker-compose build vakilsahab-frontend
+          docker-compose push vakilsahab-frontend
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup SSH Key
+        run: |
+          echo "${{ secrets.EC2_PRIVATE_KEY }}" > key.pem
+          chmod 600 key.pem
+
+      - name: Create .env on EC2
+        env:
+          ENV_FILE: ${{ secrets.ENV_FILE }}
+        run: |
+          ssh -o StrictHostKeyChecking=no -i key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} \
+          "echo \"$ENV_FILE\" > ~/vakilsahab/frontend/.env"
+
+      - name: Docker Login on EC2
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          ssh -o StrictHostKeyChecking=no -i key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} \
+          "echo \"$DOCKER_PASSWORD\" | docker login -u \"$DOCKER_USERNAME\" --password-stdin"
+
+      - name: Pull and Restart Frontend on EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no -i key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << EOF
+            cd ~/vakilsahab/frontend || exit 1
+            docker-compose pull vakilsahab-frontend
+            docker-compose down
+            docker-compose up -d vakilsahab-frontend
+          EOF

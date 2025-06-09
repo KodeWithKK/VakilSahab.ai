@@ -1,0 +1,13 @@
+services:
+  vakilsahab-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+    env_file:
+      - .env
+    container_name: vakilsahab-frontend
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
