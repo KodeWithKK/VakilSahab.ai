@@ -8,10 +8,4 @@ services:
     container_name: vakilsahab-backend
     ports:
       - "8000:8000"
-    volumes:
-      - ./src:/app/src
-    environment:
-      UV_LINK_MODE: copy
-      PYTHONUNBUFFERED: 1
-      HF_HUB_DISABLE_XET: 1
     restart: unless-stopped
