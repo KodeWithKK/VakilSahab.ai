@@ -5,5 +5,5 @@ output "lambda_url" {
 
 output "ecr_image_uri" {
   description = "Image URI used for Lambda deployment"
-  value       = "${aws_ecr_repository.lambda_ecr_repo.repository_url}:latest"
+  value       = "${aws_ecr_repository.lambda_ecr_repo.repository_url}:${var.image_tag}"
 }

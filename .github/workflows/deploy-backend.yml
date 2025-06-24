@@ -59,6 +59,9 @@ jobs:
       run:
         working-directory: backend
 
+    outputs:
+      image_tag: ${{ steps.docker.outputs.image_tag }}
+
     steps:
       - uses: actions/checkout@v4
 
@@ -73,11 +76,14 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build & Push Docker Image
+        id: docker
         run: |
+          TIMESTAMP=$(date +%s)
+          echo "image_tag=$TIMESTAMP" >> $GITHUB_OUTPUT
           ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
           ECR_URI="$ACCOUNT_ID.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO }}"
-          docker build -t $ECR_URI:latest .
-          docker push $ECR_URI:latest
+          docker build -t $ECR_URI:$TIMESTAMP .
+          docker push $ECR_URI:$TIMESTAMP
 
   terraform_lambda:
     name: Deploy Lambda with Image
@@ -87,6 +93,9 @@ jobs:
     defaults:
       run:
         working-directory: backend/terraform
+
+    env:
+      TF_VAR_image_tag: ${{ needs.docker_push.outputs.image_tag }}
 
     steps:
       - uses: actions/checkout@v4
