@@ -80,7 +80,7 @@ resource "aws_lambda_function" "fastapi_func" {
   package_type  = "Image"
   image_uri     = "${aws_ecr_repository.lambda_ecr_repo.repository_url}:latest"
   timeout       = 60
-  memory_size   = 4096
+  memory_size   = 3000
 
   environment {
     variables = {
