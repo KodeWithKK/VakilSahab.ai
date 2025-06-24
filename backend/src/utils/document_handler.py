@@ -32,4 +32,4 @@ async def process_files_and_build_index(file_paths, session_id):
     build_pinecone_session(chunks, session_id)
 
     print(f"{session_id} Documents indexed.")
-    shutil.rmtree(f"tmp/{session_id}", ignore_errors=True)
+    shutil.rmtree(f"/tmp/{session_id}", ignore_errors=True)

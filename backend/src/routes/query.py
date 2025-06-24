@@ -86,7 +86,7 @@ async def process_query(
 
     file_metadata = []
     if files:
-        session_dir = f"tmp/{session_id}"
+        session_dir = f"/tmp/{session_id}"
         file_paths = await save_upload_files(session_dir, files)
         await process_files_and_build_index(file_paths, session_id)
         redis_client.sadd("sessions:with_docs", session_id)
