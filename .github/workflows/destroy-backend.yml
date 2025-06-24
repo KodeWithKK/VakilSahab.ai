@@ -18,7 +18,6 @@ env:
   TF_VAR_pinecone_api_key: ${{ secrets.PINECONE_API_KEY }}
   TF_VAR_pinecone_index_name: "legal-chatbot-index"
   TF_VAR_redis_url: ${{ secrets.REDIS_URL }}
-  TF_VAR_clerk_secret_key: ${{ secrets.CLERK_SECRET_KEY }}
   TF_VAR_clerk_frontend_api_url: ${{ secrets.CLERK_FRONTEND_API_URL }}
 
 jobs:
