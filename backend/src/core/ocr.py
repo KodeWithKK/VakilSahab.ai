@@ -9,7 +9,7 @@ async def extract_text_from_file(file_path, file_name, session_id):
     if file_name.lower().endswith(".pdf"):
         extracted_text = extract_text_from_pdf_direct(file_path)
         if not extracted_text.strip():
-            image_folder = pdf_to_images(file_path, f"temp/{session_id}_images")
+            image_folder = pdf_to_images(file_path, f"tmp/{session_id}_images")
             extracted_text = ""
             for img_name in sorted(os.listdir(image_folder)):
                 img_path = os.path.join(image_folder, img_name)

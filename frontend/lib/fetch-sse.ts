@@ -6,9 +6,14 @@ export async function fetchSSE(
   onParse?: (parsedData: ServerEvent) => void,
   onFinish?: () => void,
 ): Promise<void> {
-  const response = await fetch(url, config);
+  try {
+    const response = await fetch(url, config);
 
-  if (response.ok) {
+    if (!response.ok) {
+      console.error("Error:", response.statusText);
+      return;
+    }
+
     const reader = response.body?.getReader();
     const decoder = new TextDecoder();
     let done = false;
@@ -16,15 +21,12 @@ export async function fetchSSE(
 
     if (reader) {
       while (!done) {
-        // Read each chunk of the stream
         const { value, done: doneReading } = await reader.read();
         done = doneReading;
 
-        // Convert the chunk to text
         streamData += decoder.decode(value, { stream: true });
 
-        // If a complete message is detected, handle the event
-        let messages = streamData.split("\n\n");
+        const messages = streamData.split("\n\n");
 
         for (const message of messages.slice(0, -1)) {
           try {
@@ -35,12 +37,12 @@ export async function fetchSSE(
           }
         }
 
-        // Keep any leftover data for the next iteration
         streamData = messages[messages.length - 1];
       }
+
       onFinish?.();
     }
-  } else {
-    console.error("Error:", response.statusText);
+  } catch (error) {
+    console.error("Error:", error);
   }
 }

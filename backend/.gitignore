@@ -11,7 +11,7 @@ wheels/
 
 # Other
 .env
-temp
+tmp
 template.yaml
 .aws-sam
 .terraform

@@ -2,7 +2,6 @@ import shutil
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-
 from src.core.config import settings
 from src.core.database import Base, engine
 from src.core.pinecone import clear_pinecone_index
@@ -45,4 +44,4 @@ def shutdown_event():
     if settings.ENVIRONMENT == "dev":
         clear_pinecone_index()
 
-    shutil.rmtree("./temp", ignore_errors=True)
+    shutil.rmtree("./tmp", ignore_errors=True)
