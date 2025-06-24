@@ -96,10 +96,6 @@ resource "aws_lambda_function" "fastapi_func" {
   }
 
   depends_on = [aws_ecr_repository.lambda_ecr_repo]
-
-  lifecycle {
-    ignore_changes = [image_uri]
-  }
 }
 
 # --- Lambda Function URL ---
