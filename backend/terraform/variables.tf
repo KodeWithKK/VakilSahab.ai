@@ -1,3 +1,9 @@
+variable "ecr_img_tag" {
+  type        = string
+  description = "The tag of the Docker image to use for Lambda deployment"
+  default     = ""
+}
+
 variable "database_url" {
   description = "PSQL Database connection URL"
   type        = string
@@ -45,10 +51,4 @@ variable "redis_url" {
 variable "clerk_frontend_api_url" {
   description = "Clerk frontend API URL"
   type        = string
-}
-
-variable "image_tag" {
-  type        = string
-  description = "The tag of the Docker image to use for Lambda deployment"
-  default     = ""
 }
