@@ -42,12 +42,6 @@ variable "redis_url" {
   type        = string
 }
 
-variable "clerk_secret_key" {
-  description = "Clerk secret key"
-  type        = string
-  sensitive   = true
-}
-
 variable "clerk_frontend_api_url" {
   description = "Clerk frontend API URL"
   type        = string

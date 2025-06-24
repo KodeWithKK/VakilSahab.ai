@@ -33,12 +33,11 @@ resource "aws_ecr_lifecycle_policy" "ecr_lifecycle" {
     rules = [
       {
         rulePriority = 1
-        description  = "Keep only latest image"
+        description  = "Keep only the newest image"
         selection = {
-          tagStatus     = "tagged"
-          tagPrefixList = ["latest"]
-          countType     = "imageCountMoreThan"
-          countNumber   = 1
+          tagStatus   = "any"
+          countType   = "imageCountMoreThan"
+          countNumber = 1
         }
         action = {
           type = "expire"
@@ -80,7 +79,7 @@ resource "aws_lambda_function" "fastapi_func" {
   package_type  = "Image"
   image_uri     = "${aws_ecr_repository.lambda_ecr_repo.repository_url}:latest"
   timeout       = 60
-  memory_size   = 3000
+  memory_size   = 1024
 
   environment {
     variables = {
@@ -92,7 +91,6 @@ resource "aws_lambda_function" "fastapi_func" {
       PINECONE_API_KEY       = var.pinecone_api_key
       PINECONE_INDEX_NAME    = var.pinecone_index_name
       REDIS_URL              = var.redis_url
-      CLERK_SECRET_KEY       = var.clerk_secret_key
       CLERK_FRONTEND_API_URL = var.clerk_frontend_api_url
     }
   }

@@ -12,7 +12,6 @@ class Settings(BaseSettings):
     PINECONE_API_KEY: str
     PINECONE_INDEX_NAME: str
     REDIS_URL: str
-    CLERK_SECRET_KEY: str
     CLERK_FRONTEND_API_URL: str
 
     class Config:
