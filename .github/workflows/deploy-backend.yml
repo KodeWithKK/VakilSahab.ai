@@ -16,7 +16,7 @@ env:
   TF_VAR_gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
   TF_VAR_mistral_api_key: ${{ secrets.MISTRAL_API_KEY }}
   TF_VAR_pinecone_api_key: ${{ secrets.PINECONE_API_KEY }}
-  TF_VAR_pinecone_index_name: "legal-chatbot-index"
+  TF_VAR_pinecone_index_name: "vakilsahab-chatbot-index"
   TF_VAR_redis_url: ${{ secrets.REDIS_URL }}
   TF_VAR_clerk_frontend_api_url: ${{ secrets.CLERK_FRONTEND_API_URL }}
 
