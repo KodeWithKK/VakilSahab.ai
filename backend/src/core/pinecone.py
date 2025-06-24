@@ -1,7 +1,8 @@
+from functools import lru_cache
 from typing import List
 
 from langchain.docstore.document import Document
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_huggingface.embeddings import HuggingFaceEmbeddings
 from langchain_pinecone import PineconeVectorStore
 from pinecone import Pinecone, ServerlessSpec
 from src.core.config import settings
@@ -23,7 +24,11 @@ if index_name not in existing_indexes:
 pinecone_index = pc.Index(index_name)
 
 # Initialize embedding model
-embedding_model = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+
+
+@lru_cache
+def get_embedding_model():
+    return HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 
 
 def build_pinecone_session(text_chunks: List[str], session_id: str):
@@ -35,7 +40,7 @@ def build_pinecone_session(text_chunks: List[str], session_id: str):
     # Connect to existing Pinecone index
     vectorstore = PineconeVectorStore(
         index=pinecone_index,
-        embedding=embedding_model,
+        embedding=get_embedding_model(),
         text_key="text",  # raw text key
     )
 
@@ -44,7 +49,7 @@ def build_pinecone_session(text_chunks: List[str], session_id: str):
 
 def load_pinecone_retriever(session_id: str, top_k: int = 4):
     vectorstore = PineconeVectorStore(
-        index=pinecone_index, embedding=embedding_model, text_key="text"
+        index=pinecone_index, embedding=get_embedding_model(), text_key="text"
     )
     retriever = vectorstore.as_retriever(
         search_kwargs={"k": top_k, "filter": {"session_id": session_id}}

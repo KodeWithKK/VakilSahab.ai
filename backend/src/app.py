@@ -16,7 +16,7 @@ app = FastAPI(title="VakilSahab.ai")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.FRONTEND_ORIGIN],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -30,7 +30,7 @@ app.include_router(main_context.router, tags=["Main Context"], prefix="/api/main
 app.include_router(session.router, tags=["Session"], prefix="/api/session")
 app.include_router(query.router, tags=["Query"], prefix="/api/query")
 
-# Register custom handlers
+# Exception handlers
 app.add_exception_handler(HTTPException, http_exception_handler)
 app.add_exception_handler(Exception, generic_exception_handler)
 
@@ -44,6 +44,5 @@ def welcome():
 def shutdown_event():
     if settings.ENVIRONMENT == "dev":
         clear_pinecone_index()
-        # clear_redis_database()
 
     shutil.rmtree("./temp", ignore_errors=True)

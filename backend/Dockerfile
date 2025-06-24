@@ -1,21 +1,28 @@
-FROM ghcr.io/astral-sh/uv:python3.11-bookworm-slim
+FROM ghcr.io/astral-sh/uv:latest AS uv
+
+FROM public.ecr.aws/lambda/python:3.11 AS builder
+
+ENV UV_COMPILE_BYTECODE=1
+ENV UV_NO_INSTALLER_METADATA=1
+ENV UV_LINK_MODE=copy
+
+COPY --from=uv /uv /bin/uv
 
 WORKDIR /app
 
-ENV UV_COMPILE_BYTECODE=1 \
-    UV_LINK_MODE=copy \
-    PYTHONUNBUFFERED=1 \
-    HF_HUB_DISABLE_XET=1 \
-    PATH="/app/.venv/bin:$PATH"
+COPY uv.lock pyproject.toml requirements.txt  ./
 
-COPY pyproject.toml uv.lock ./
+# RUN uv export --frozen --no-emit-workspace --no-dev --no-editable -o requirements.txt && \
+#     uv pip install -r requirements.txt --target "${LAMBDA_TASK_ROOT}"
 
-RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --frozen --no-dev
+RUN uv pip install -r requirements.txt \
+    --extra-index-url https://download.pytorch.org/whl/cpu \
+    --target "${LAMBDA_TASK_ROOT}"
 
-COPY . .
 
-EXPOSE 8000
-ENTRYPOINT []
+FROM public.ecr.aws/lambda/python:3.11
 
-CMD ["python", "main.py"]
+COPY --from=builder ${LAMBDA_TASK_ROOT} ${LAMBDA_TASK_ROOT}
+COPY . ${LAMBDA_TASK_ROOT}
+
+CMD ["lambda_handler.handler"]

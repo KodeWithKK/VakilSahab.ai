@@ -12,3 +12,7 @@ wheels/
 # Other
 .env
 temp
+template.yaml
+.aws-sam
+.terraform
+terraform.tfvars
