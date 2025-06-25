@@ -1,6 +1,8 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useLayoutEffect, useState } from "react";
+
+import useIsMobile from "@/hooks/use-is-mobile";
 
 interface IAppContext {
   showSidebar: boolean;
@@ -14,7 +16,14 @@ export const useAppContext = () => {
 };
 
 function AppProvider({ children }: { children: React.ReactNode }) {
-  const [showSidebar, setShowSidebar] = useState(true);
+  const isMobile = useIsMobile();
+  const [showSidebar, setShowSidebar] = useState(false);
+
+  useLayoutEffect(() => {
+    if (!isMobile) {
+      setShowSidebar(true);
+    }
+  }, [isMobile]);
 
   return (
     <AppContext.Provider value={{ showSidebar, setShowSidebar }}>

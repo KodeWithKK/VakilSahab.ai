@@ -39,10 +39,11 @@ function ChatBot() {
         }
         isStreaming={showSkelton}
       />
+      {/* Remove fixed positioning */}
       <div
         className={cn(
-          "fixed bottom-0 left-0 z-10 w-full bg-background pl-64 transition-all",
-          !showSidebar && "pl-0",
+          "fixed bottom-0 left-0 w-full bg-background pl-0 transition-all md:pl-64",
+          !showSidebar && "md:pl-0",
         )}
       >
         <InputContainer

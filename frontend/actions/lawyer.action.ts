@@ -12,9 +12,6 @@ export interface LawyerInfoInsertPayload
 }
 
 export const getLawyersInfo = async () => {
-  const { userId } = await auth();
-  if (!userId) return null;
-
   const lawyers = await db.query.lawyerInfo.findMany({
     columns: {
       userId: false,
@@ -28,7 +25,6 @@ export const getLawyersInfo = async () => {
         },
       },
     },
-    where: eq(lawyerInfo.userId, userId),
   });
 
   return lawyers.map((lawyer) => {

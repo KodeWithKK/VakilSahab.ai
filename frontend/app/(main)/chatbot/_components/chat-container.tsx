@@ -19,7 +19,7 @@ function ChatsContainer({
   const { user } = useUser();
 
   return (
-    <div className="mx-auto flex w-[70%] flex-grow flex-col overflow-y-auto py-5">
+    <div className="mx-auto flex w-[95%] flex-col overflow-y-auto py-5 md:w-[70%]">
       <div className="flex flex-col gap-2">
         {!showLoadingSkelton &&
           messages.map((message) => (

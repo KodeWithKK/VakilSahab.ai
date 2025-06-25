@@ -1,7 +1,15 @@
-import React from "react";
+import { IconBrand } from "@/lib/icons";
 
 function BrandLogo() {
-  return <h3 className="text-lg font-medium">VakilSahab.ai</h3>;
+  return (
+    <div className="flex items-center gap-2">
+      <IconBrand className="h-6 w-6 text-primary" />
+      <h3 className="font-medium">
+        <span>VakilSahab</span>
+        <span className="text-primary">.ai</span>
+      </h3>
+    </div>
+  );
 }
 
 export default BrandLogo;

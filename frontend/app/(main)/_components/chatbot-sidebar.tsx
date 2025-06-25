@@ -3,15 +3,19 @@
 import { useParams, useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
+import { useAppContext } from "@/contexts/app-provider";
 import { useChatbotContext } from "@/contexts/chatbot-provider";
+import useIsMobile from "@/hooks/use-is-mobile";
 import { IconDelete, IconLoader } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 
 function ChatbotSidebar() {
-  const { chatInfos, isChatsInfoLoading, deleteChat } = useChatbotContext();
-
-  const chatId = useParams<{ id: string }>().id;
   const router = useRouter();
+  const isMobile = useIsMobile();
+  const chatId = useParams<{ id: string }>().id;
+
+  const { setShowSidebar } = useAppContext();
+  const { chatInfos, isChatsInfoLoading, deleteChat } = useChatbotContext();
 
   return (
     <div className="">
@@ -32,7 +36,10 @@ function ChatbotSidebar() {
                     ? "bg-secondary/50"
                     : "hover:bg-secondary/30",
                 )}
-                onClick={() => router.push(`/chatbot/${chat.id}`)}
+                onClick={() => {
+                  if (isMobile) setShowSidebar(false);
+                  router.push(`/chatbot/${chat.id}`);
+                }}
               >
                 <div className="w-[100%] text-left transition-all duration-200 group-hover:w-[calc(100%-24px)]">
                   <p className="truncate text-sm">{chat.name}</p>

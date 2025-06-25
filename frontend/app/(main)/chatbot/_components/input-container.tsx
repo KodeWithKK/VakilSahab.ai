@@ -42,8 +42,8 @@ function InputContainer({
   );
 
   return (
-    <div className="mx-auto w-[70%] rounded-t-xl border bg-secondary/20 p-2 pb-0">
-      <div className="space-y-1.5 rounded-t-lg border border-b-0 bg-secondary/60 p-2">
+    <div className="mx-auto w-[95%] rounded-t-xl border bg-secondary/20 p-2 pb-0 md:w-[70%]">
+      <div className="space-y-1 rounded-t-lg border border-b-0 bg-secondary/60 p-2 md:space-y-1.5">
         <DisplayFiles files={files} handleRemove={handleRemove} />
         <TextArea
           maxHeight={100}
@@ -60,7 +60,7 @@ function InputContainer({
             onInputChange(e.currentTarget.value);
           }}
         />
-        <div className="flex justify-between">
+        <div className="flex justify-between pb-1">
           <UploadFiles
             files={files}
             setFiles={setFiles}
